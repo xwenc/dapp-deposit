@@ -24,6 +24,8 @@
       "@components/*": ["src/components/*"],
       "@abis/*": ["src/abis/*"],
       "@connections/*": ["src/connections/*"],
+      "@layouts/*": ["src/layouts/*"],
+      "@assets/*": ["src/assets/*"],
     }
   },
 
