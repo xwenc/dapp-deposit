@@ -1,7 +1,7 @@
 const Home = () => {
   return (
     <div>
-      <h1>{process.env.REACT_APP_API_URL} DeFi App</h1>
+      <h1>{process.env.REACT_APP_INFURA_API_KEY} DeFi App</h1>
     </div>
   );
 };
