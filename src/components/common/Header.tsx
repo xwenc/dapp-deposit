@@ -13,7 +13,6 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useLocation, NavLink } from "react-router-dom";
 import cx from "classnames";
 import { metaMask } from "@connections/metaMask";
-import Logo from "@assets/logo.png";
 import useWallet from "@hooks/useWallet";
 
 
@@ -27,8 +26,8 @@ const Header = () => {
   } = useWallet();
   const location = useLocation();
   const navigation = [
-    { name: "首页", href: "/", current: location.pathname === "/" },
-    { name: "钱包", href: "/dapp", current: location.pathname === "/dapp" },
+    { name: "Home", href: "/", current: location.pathname === "/" },
+    { name: "Wallet", href: "/dapp", current: location.pathname === "/dapp" },
   ];
 
   // attempt to connect eagerly on mount
@@ -39,7 +38,7 @@ const Header = () => {
   }, []);
 
   return (
-    <Disclosure as="nav" className="bg-gray-800">
+    <Disclosure as="nav">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
@@ -58,9 +57,6 @@ const Header = () => {
             </DisclosureButton>
           </div>
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-            <div className="flex shrink-0 items-center">
-              <img alt="Your Company" src={Logo} className="h-8 w-auto" />
-            </div>
             <div className="hidden sm:ml-6 sm:block">
               <div className="flex space-x-4">
                 {navigation.map((item) => (
@@ -100,7 +96,7 @@ const Header = () => {
                 </div>
                 <MenuItems
                   transition
-                  className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
+                  className="absolute right-0 z-10 mt-2 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
                 >
                   <MenuItem>
                     <button

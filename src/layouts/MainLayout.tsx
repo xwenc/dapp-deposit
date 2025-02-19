@@ -5,15 +5,15 @@ import { Toaster } from "react-hot-toast";
 
 const MainLayout = () => {
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <main className="flex-1">
         <div className="mx-auto max-w-3xl">
           <Outlet />
         </div>
       </main>
       <Toaster />
-    </>
+    </div>
   );
 };
 // MainLayout.whyDidYouRender = true;
