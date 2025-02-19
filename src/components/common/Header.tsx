@@ -12,93 +12,31 @@ import {
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useLocation, NavLink } from "react-router-dom";
 import cx from "classnames";
-import { hooks, metaMask } from "@connections/metaMask";
+import { metaMask } from "@connections/metaMask";
 import Logo from "@assets/logo.png";
+import useWallet from "@hooks/useWallet";
 
-import { CHAINS, getAddChainParameters } from "@utils/chains";
-
-const {
-  useChainId,
-  useAccounts,
-  useIsActivating,
-  useIsActive,
-  useProvider,
-  useENSNames,
-} = hooks;
 
 const Header = () => {
-  const [error, setError] = useState<Error | undefined>();
+  const {
+    isActive,
+    isActivating,
+    account,
+    onConnect,
+    onDisconnect,
+  } = useWallet();
   const location = useLocation();
   const navigation = [
     { name: "首页", href: "/", current: location.pathname === "/" },
     { name: "钱包", href: "/dapp", current: location.pathname === "/dapp" },
   ];
-  const isActive = useIsActive();
-  const isActivating = useIsActivating();
-  const account = useAccounts();
-
-  const connect = useCallback(
-    async (desiredChainId: number) => {
-      try {
-        await metaMask.activate(getAddChainParameters(desiredChainId));
-        setError(undefined);
-      } catch (err) {
-        setError(err as Error);
-      }
-    },
-    [metaMask, setError]
-  );
-
-  const disconnect = useCallback(async () => {
-    if (metaMask?.deactivate) {
-      await metaMask.deactivate();
-    } else {
-      await metaMask.resetState();
-    }
-  }, [metaMask]);
-
-  const onConnect = useCallback(async () => {
-    try {
-      await toast.promise(
-        connect(11155111),
-        {
-          loading: "Connecting to MetaMask...",
-          success: "Connected to MetaMask",
-          error: "Failed to connect to MetaMask",
-        },
-        {
-          duration: 5000,
-        }
-      );
-    } catch (err) {
-      toast.error("Failed to connect to MetaMask");
-    }
-  }, [connect]);
-
-  const onDisconnect = useCallback(async () => {
-    try {
-      await toast.promise(
-        disconnect(),
-        {
-          loading: "Disconnecting from MetaMask...",
-          success: "Disconnected from MetaMask",
-          error: "Failed to disconnect from MetaMask",
-        },
-        {
-          duration: 5000,
-        }
-      );
-    } catch (err) {
-      toast.error("Failed to disconnect from MetaMask");
-    }
-  }, []);
 
   // attempt to connect eagerly on mount
-  // useEffect(() => {
-  //   void metaMask.connectEagerly().catch(() => {
-  //     console.debug("Failed to connect eagerly to metamask");
-  //   });
-  // }, []);
+  useEffect(() => {
+    void metaMask.connectEagerly().catch(() => {
+      console.debug("Failed to connect eagerly to metamask");
+    });
+  }, []);
 
   return (
     <Disclosure as="nav" className="bg-gray-800">
@@ -147,7 +85,7 @@ const Header = () => {
             {!isActive ? (
               <button
                 type="button"
-                className="rounded-md px-3 py-2 text-sm font-medium border border-gray-400 text-gray-300 hover:bg-gray-700 hover:text-white"
+                className="rounded-full px-4 py-2 text-sm font-medium border border-gray-400 text-gray-300 hover:bg-gray-700 hover:text-white"
                 onClick={onConnect}
                 disabled={isActivating}
               >
@@ -156,12 +94,8 @@ const Header = () => {
             ) : (
               <Menu as="div" className="relative ml-3">
                 <div>
-                  <MenuButton className="relative rounded-full px-2.5 py-0.5 flex bg-gray-800 border border-white text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                    <span className="absolute -inset-1.5" />
-                    <span className="sr-only">Open user menu</span>
-                    <span className="font-medium leading-8 text-gray-300 dark:text-gray-100">
-                      {account?.[0].slice(0, 6)}...
-                    </span>
+                  <MenuButton className="rounded-full px-4 py-2 text-sm font-medium border border-gray-400 text-gray-300 hover:bg-gray-700 hover:text-white">
+                    {account?.[0].slice(0, 6)}...{account?.[0].slice(-4)}
                   </MenuButton>
                 </div>
                 <MenuItems
