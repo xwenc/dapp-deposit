@@ -7,8 +7,10 @@ import { formatBalance } from "@utils/format";
 
 const { useAccounts, useIsActivating, useIsActive, useProvider } = hooks;
 
+const REACT_APP_NETWORK_ID = Number(process.env.REACT_APP_NETWORK_ID);
+
 const useWallet = () => {
-  const REACT_APP_NETWORK_ID = Number(process.env.REACT_APP_NETWORK_ID);
+ 
   const [balance, setBalance] = useState<string | null>(null);
   const navigate = useNavigate();
   const [error, setError] = useState<Error | undefined>();
