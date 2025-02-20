@@ -11,9 +11,8 @@ import {
 import useWallet from "./useWallet";
 import toast from "react-hot-toast";
 
-const REACT_APP_NETWORK_ID = process.env.REACT_APP_NETWORK_ID;
-
 const useContract = () => {
+  const REACT_APP_NETWORK_ID = process.env.REACT_APP_NETWORK_ID;
   const [loading, setLoading] = useState(false);
   const [contract, setContract] = useState<any | null>(null);
   const config = contractConfig as DefiDepositContract;
