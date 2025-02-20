@@ -24,6 +24,7 @@ export default function DepositForm() {
     ethDeposit,
     ethWithdraw,
     loading,
+    message,
   } = useContract();
   const currentSymbol = symbol[selectedToken];
   const onsubmit = useCallback(
@@ -154,7 +155,7 @@ export default function DepositForm() {
             {/* 旋转加载动画 */}
             <div className="w-16 h-16 border-4 border-t-transparent border-white rounded-full animate-spin"></div>
             <p className="mt-4 text-white text-lg font-semibold">
-              Trading in progress, Please wait...
+             {message}
             </p>
           </div>
         </div>

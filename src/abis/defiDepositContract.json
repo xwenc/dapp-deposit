@@ -180,7 +180,7 @@
     }
   ],
   "networks": {
-    "5777": {
+    "1337": {
       "events": {},
       "links": {},
       "address": "0x9E3e331B634a379010847a31db9ab2C32A58cDB7",

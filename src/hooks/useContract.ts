@@ -11,6 +11,7 @@ const NETWORK_ID = process.env.REACT_APP_NETWORK_ID;
 
 const useContract = () => {
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
   const [contract, setContract] = useState<any | null>(null);
   const [tokenContract, setTokenContract] = useState<any | null>(null);
   const _contractConfig = contractConfig as ContractType;
@@ -94,15 +95,19 @@ const useContract = () => {
     async (amount: number) => {
       try {
         if (contract) {
+          setLoading(true);
+          setMessage("Sending transaction...");
           const _tx: ContractTransactionResponse = await contract.ethDeposit({
             value: parseEther(String(amount)),
           });
-          setLoading(true);
           const tx = await _tx.getTransaction();
+          setMessage("Transaction sent, waiting for confirmation...");
           if (tx) {
             await tx.wait();
-            setLoading(false);
-            toast.success("ETH deposited successfully");
+            setMessage("Transaction confirmed");
+            setTimeout(() => {
+              setLoading(false);
+            }, 2000);
             await getEthBalance();
           }
         }
@@ -111,6 +116,7 @@ const useContract = () => {
         toast.error("Failed to deposit ETH");
       } finally {
         setLoading(false);
+        setMessage("");
       }
     },
     [contract]
@@ -119,8 +125,8 @@ const useContract = () => {
   // 检查并授权 ERC20
   const approveERC20 = useCallback(
     async (amount: string) => {
-      if (!tokenContract || !contract) throw new Error("合约未初始化");
-      console.log("contract: ", tokenContract);
+      if (!tokenContract || !contract) throw new Error("Contract not found");
+
       const allowance = await tokenContract.allowance(
         tokenAddress,
         contractAddress
@@ -143,13 +149,18 @@ const useContract = () => {
       try {
         if (contract) {
           setLoading(true);
+          setMessage("Waiting for approval...");
           await approveERC20(String(amount));
+          setMessage("Sending transaction...");
           const _tx = await contract.erc20Deposit(parseEther(String(amount)));
           const tx = await _tx.getTransaction();
+          setMessage("Transaction sent, waiting for confirmation...");
           if (tx) {
             await tx.wait();
-            setLoading(false);
-            toast.success("YIDENG coin deposited successfully");
+            setMessage("Transaction confirmed");
+            setTimeout(() => {
+              setLoading(false);
+            }, 2000);
             await getERC20Balance();
           }
         }
@@ -158,6 +169,7 @@ const useContract = () => {
         toast.error("Failed to deposit YIDENG coin");
       } finally {
         setLoading(false);
+        setMessage("");
       }
     },
     [contract]
@@ -168,12 +180,16 @@ const useContract = () => {
       try {
         if (contract) {
           setLoading(true);
+          setMessage("Sending transaction...");
           const _tx = await contract.ethWithdraw(parseEther(String(amount)));
           const tx = await _tx.getTransaction();
+          setMessage("Transaction sent, waiting for confirmation...");
           if (tx) {
             await tx.wait();
-            setLoading(false);
-            toast.success("ETH withdrawn successfully");
+            setMessage("Transaction confirmed");
+            setTimeout(() => {
+              setLoading(false);
+            }, 2000);
             await getEthBalance();
           }
         }
@@ -182,6 +198,7 @@ const useContract = () => {
         toast.error("Failed to withdraw ETH");
       } finally {
         setLoading(false);
+        setMessage("");
       }
     },
     [contract]
@@ -192,12 +209,16 @@ const useContract = () => {
       try {
         if (contract) {
           setLoading(true);
+          setMessage("Sending transaction...");
           const _tx = await contract.erc20Withdraw(parseEther(String(amount)));
           const tx = await _tx.getTransaction();
+          setMessage("Transaction sent, waiting for confirmation...");
           if (tx) {
             await tx.wait();
-            setLoading(false);
-            toast.success("YIDENG coin withdrawn successfully");
+            setMessage("Transaction confirmed");
+            setTimeout(() => {
+              setLoading(false);
+            }, 2000);
             await getERC20Balance();
           }
         }
@@ -206,6 +227,7 @@ const useContract = () => {
         toast.error("Failed to withdraw YIDENG coin");
       } finally {
         setLoading(false);
+        setMessage("");
       }
     },
     [contract]
@@ -230,6 +252,7 @@ const useContract = () => {
     erc20Deposit,
     ethWithdraw,
     erc20Withdraw,
+    message,
   };
 };
 
