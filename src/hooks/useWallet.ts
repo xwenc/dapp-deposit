@@ -7,7 +7,7 @@ import { formatBalance } from "@utils/format";
 
 const { useAccounts, useIsActivating, useIsActive, useProvider } = hooks;
 
-const REACT_APP_NETWORK_ID = Number(process.env.REACT_APP_NETWORK_ID);
+const NETWORK_ID = Number(process.env.NEXT_PUBLIC_NETWORK_ID);
 
 const useWallet = () => {
  
@@ -42,12 +42,12 @@ const useWallet = () => {
   }, [metaMask]);
 
   const onConnect = useCallback(async () => {
-    if (!REACT_APP_NETWORK_ID) {
+    if (!NETWORK_ID) {
       toast.error("Network ID is not set");
       return;
     }
     try {
-      connect(REACT_APP_NETWORK_ID);
+      connect(NETWORK_ID);
     } catch (err) {
       toast.error("Failed to connect to MetaMask");
     }

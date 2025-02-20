@@ -7,7 +7,7 @@ export default function Home() {
       <h2 className="text-4xl font-semibold tracking-tight text-white sm:text-4xl animate-pulse">
         Experience the future of decentralized finance with our cutting-edge DApp.
       </h2>
-      {process.env.REACT_APP_NETWORK_ID}
+      {process.env.NETWORK_ID_NETWORK_ID}
       {!isActive ? (
         <div className="mt-10 flex items-center gap-x-6">
           <button

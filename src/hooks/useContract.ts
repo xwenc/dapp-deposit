@@ -10,7 +10,7 @@ import {
 import useWallet from "./useWallet";
 import toast from "react-hot-toast";
 
-const REACT_APP_NETWORK_ID = process.env.REACT_APP_NETWORK_ID;
+const NETWORK_ID = process.env.NEXT_PUBLIC_NETWORK_ID;
 
 const useContract = () => {
 
@@ -20,11 +20,11 @@ const useContract = () => {
   const { provider, account, fetchBalance } = useWallet();
   const contractAbi = useMemo(() => config.abi, [config.abi]);
   const contractAddress = useMemo(() => {
-    if (REACT_APP_NETWORK_ID) {
-      return config.networks[REACT_APP_NETWORK_ID]?.address;
+    if (NETWORK_ID) {
+      return config.networks[NETWORK_ID]?.address;
     }
     return null;
-  }, [config.networks, REACT_APP_NETWORK_ID]);
+  }, [config.networks, NETWORK_ID]);
   const [ethBalance, setEthBalance] = useState<string | null>(null);
   const [erc20Balance, setErc20Balance] = useState<string | null>(null);
 
