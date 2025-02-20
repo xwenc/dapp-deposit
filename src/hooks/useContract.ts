@@ -1,7 +1,13 @@
 import { useCallback, useMemo, useState, useEffect } from "react";
 import contractConfig from "@abis/defiDepositContract.json";
 import type { DefiDepositContract } from "@utils/types";
-import { Contract, parseEther, formatEther, ContractTransactionResponse, TransactionReceipt } from "ethers";
+import {
+  Contract,
+  parseEther,
+  formatEther,
+  ContractTransactionResponse,
+  TransactionReceipt,
+} from "ethers";
 import useWallet from "./useWallet";
 import toast from "react-hot-toast";
 
@@ -67,15 +73,15 @@ const useContract = () => {
           if (tx) {
             await tx.wait();
             setLoading(false);
-            toast.success(
-              "ETH deposited successfully"
-            );
+            toast.success("ETH deposited successfully");
             await getEthBalance();
           }
         }
       } catch (err) {
         console.error(err);
         toast.error("Failed to deposit ETH");
+      } finally {
+        setLoading(false);
       }
     },
     [contract]
@@ -88,18 +94,18 @@ const useContract = () => {
           setLoading(true);
           const _tx = await contract.erc20Deposit(parseEther(String(amount)));
           const tx = await _tx.getTransaction();
-          if(tx) {
+          if (tx) {
             await tx.wait();
             setLoading(false);
-            toast.success(
-              "YIDENG coin deposited successfully"
-            );
+            toast.success("YIDENG coin deposited successfully");
             await getERC20Balance();
           }
         }
       } catch (err) {
         console.error(err);
         toast.error("Failed to deposit YIDENG coin");
+      } finally {
+        setLoading(false);
       }
     },
     [contract]
@@ -112,7 +118,7 @@ const useContract = () => {
           setLoading(true);
           const _tx = await contract.ethWithdraw(parseEther(String(amount)));
           const tx = await _tx.getTransaction();
-          if(tx) {
+          if (tx) {
             await tx.wait();
             setLoading(false);
             toast.success("ETH withdrawn successfully");
@@ -122,6 +128,8 @@ const useContract = () => {
       } catch (err) {
         console.error(err);
         toast.error("Failed to withdraw ETH");
+      } finally {
+        setLoading(false);
       }
     },
     [contract]
@@ -134,17 +142,18 @@ const useContract = () => {
           setLoading(true);
           const _tx = await contract.erc20Withdraw(parseEther(String(amount)));
           const tx = await _tx.getTransaction();
-          if(tx) {
+          if (tx) {
             await tx.wait();
             setLoading(false);
             toast.success("YIDENG coin withdrawn successfully");
             await getERC20Balance();
           }
-        
         }
       } catch (err) {
         console.error(err);
         toast.error("Failed to withdraw YIDENG coin");
+      } finally {
+        setLoading(false);
       }
     },
     [contract]
