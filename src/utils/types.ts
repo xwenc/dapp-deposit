@@ -1,4 +1,4 @@
-export type DefiDepositContract = {
+export type ContractType = {
   contractName: string;
   abi: any;
   networks: {

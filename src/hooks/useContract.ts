@@ -1,32 +1,61 @@
 import { useCallback, useMemo, useState, useEffect } from "react";
 import contractConfig from "@abis/defiDepositContract.json";
-import type { DefiDepositContract } from "@utils/types";
-import {
-  Contract,
-  parseEther,
-  formatEther,
-  ContractTransactionResponse,
-} from "ethers";
+import tokenConfig from "@abis/yidengCoinToken.json";
+import type { ContractType } from "@utils/types";
+import { ethers, Contract, parseEther, formatEther } from "ethers";
+import type { ContractTransactionResponse, EtherscanProvider } from "ethers";
 import useWallet from "./useWallet";
 import toast from "react-hot-toast";
 
 const NETWORK_ID = process.env.REACT_APP_NETWORK_ID;
 
 const useContract = () => {
-
   const [loading, setLoading] = useState(false);
   const [contract, setContract] = useState<any | null>(null);
-  const config = contractConfig as DefiDepositContract;
+  const [tokenContract, setTokenContract] = useState<any | null>(null);
+  const _contractConfig = contractConfig as ContractType;
+  const _tokenConfig = tokenConfig as ContractType;
   const { provider, account, fetchBalance } = useWallet();
-  const contractAbi = useMemo(() => config.abi, [config.abi]);
+  const contractAbi = useMemo(() => _contractConfig.abi, [_contractConfig.abi]);
   const contractAddress = useMemo(() => {
     if (NETWORK_ID) {
-      return config.networks[NETWORK_ID]?.address;
+      return _contractConfig.networks[NETWORK_ID]?.address;
     }
-    return null;
-  }, [config.networks, NETWORK_ID]);
+    return "";
+  }, [_contractConfig.networks, NETWORK_ID]);
+  const tokenAbi = useMemo(() => _tokenConfig.abi, [_tokenConfig.abi]);
+  const tokenAddress = useMemo(() => {
+    if (NETWORK_ID) {
+      return _tokenConfig.networks[NETWORK_ID]?.address;
+    }
+    return "";
+  }, [tokenConfig.networks, NETWORK_ID]);
   const [ethBalance, setEthBalance] = useState<string | null>(null);
   const [erc20Balance, setErc20Balance] = useState<string | null>(null);
+
+  // initialize contract
+  const initializeContract = useCallback(async () => {
+    try {
+      if (!window.ethereum) throw new Error("请安装 MetaMask");
+
+      const provider = new ethers.BrowserProvider(window.ethereum as any);
+      const signer = await provider.getSigner();
+
+      // 初始化主合约
+      const defiContract = new ethers.Contract(
+        contractAddress,
+        contractAbi,
+        signer
+      );
+      setContract(defiContract);
+
+      // 初始化 ERC20 代币合约
+      const erc20Contract = new ethers.Contract(tokenAddress, tokenAbi, signer);
+      setTokenContract(erc20Contract);
+    } catch (err: any) {
+      console.error("合约初始化错误:", err);
+    }
+  }, [contractAddress, tokenAddress]);
 
   const getEthBalance = useCallback(async () => {
     try {
@@ -87,11 +116,31 @@ const useContract = () => {
     [contract]
   );
 
+  // 检查并授权 ERC20
+  const approveERC20 = useCallback(
+    async (amount: string) => {
+      if (!tokenContract || !contract) throw new Error("合约未初始化");
+      console.log("contract: ", tokenContract);
+      const allowance = await tokenContract.allowance(tokenAddress, contractAddress);
+      const amountBigInt = parseEther(amount);
+
+      if (allowance < amountBigInt) {
+        const approveTx = await tokenContract.approve(
+          contractAddress,
+          amountBigInt
+        );
+        await approveTx.wait();
+      }
+    },
+    [tokenContract, contract, tokenAddress, contractAddress]
+  );
+
   const erc20Deposit = useCallback(
     async (amount: number) => {
       try {
         if (contract) {
           setLoading(true);
+          await approveERC20(String(amount));
           const _tx = await contract.erc20Deposit(parseEther(String(amount)));
           const tx = await _tx.getTransaction();
           if (tx) {
@@ -160,16 +209,8 @@ const useContract = () => {
   );
 
   useEffect(() => {
-    if (contractAddress && contractAbi && provider && account) {
-      const signer = provider.getSigner(account);
-      const contract = new Contract(
-        contractAddress,
-        contractAbi,
-        signer as any
-      );
-      setContract(contract);
-    }
-  }, [contractAddress, contractAbi, provider, account]);
+    initializeContract();
+  }, [initializeContract]);
 
   useEffect(() => {
     updateBalance();

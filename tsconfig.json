@@ -26,7 +26,9 @@
       "@connections/*": ["src/connections/*"],
       "@layouts/*": ["src/layouts/*"],
       "@assets/*": ["src/assets/*"],
-    }
+      "@types/*": ["src/types/*"],
+    },
+    "typeRoots": ["./node_modules/@types", "./src/types"],
   },
 
   "include": ["src", "tests"]
