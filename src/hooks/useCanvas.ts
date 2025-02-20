@@ -86,10 +86,7 @@ export default function useParticleCanvas() {
     init();
   });
 
-  function run() {
-    init();
-    animate();
-  }
+  init();
+  animate();
   
-  return run;
 }
