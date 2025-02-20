@@ -15,7 +15,7 @@ const useContract = () => {
   const [tokenContract, setTokenContract] = useState<any | null>(null);
   const _contractConfig = contractConfig as ContractType;
   const _tokenConfig = tokenConfig as ContractType;
-  const { provider, account, fetchBalance } = useWallet();
+  const { account, fetchBalance } = useWallet();
   const contractAbi = useMemo(() => _contractConfig.abi, [_contractConfig.abi]);
   const contractAddress = useMemo(() => {
     if (NETWORK_ID) {
@@ -121,7 +121,10 @@ const useContract = () => {
     async (amount: string) => {
       if (!tokenContract || !contract) throw new Error("合约未初始化");
       console.log("contract: ", tokenContract);
-      const allowance = await tokenContract.allowance(tokenAddress, contractAddress);
+      const allowance = await tokenContract.allowance(
+        tokenAddress,
+        contractAddress
+      );
       const amountBigInt = parseEther(amount);
 
       if (allowance < amountBigInt) {
