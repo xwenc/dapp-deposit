@@ -10,7 +10,7 @@ import {
 import useWallet from "./useWallet";
 import toast from "react-hot-toast";
 
-const NETWORK_ID = process.env.NEXT_PUBLIC_NETWORK_ID;
+const NETWORK_ID = process.env.REACT_APP_NETWORK_ID;
 
 const useContract = () => {
 

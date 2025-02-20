@@ -7,7 +7,7 @@ import { formatBalance } from "@utils/format";
 
 const { useAccounts, useIsActivating, useIsActive, useProvider } = hooks;
 
-const NETWORK_ID = Number(process.env.NEXT_PUBLIC_NETWORK_ID);
+const NETWORK_ID = Number(process.env.REACT_APP_NETWORK_ID);
 
 const useWallet = () => {
  

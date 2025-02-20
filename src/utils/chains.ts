@@ -23,8 +23,8 @@ function isExtendedChainInformation(
 }
 
 const getInfuraUrlFor = (network: string) =>
-  process.env.NEXT_PUBLIC_INFURA_API_KEY
-    ? `https://${network}.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_API_KEY}`
+  process.env.REACT_APP_INFURA_API_KEY
+    ? `https://${network}.infura.io/v3/${process.env.REACT_APP_INFURA_API_KEY}`
     : '';
 const getAlchemyUrlFor = (network: string) =>
   process.env.alchemyKey
