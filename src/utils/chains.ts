@@ -75,10 +75,10 @@ export const TESTNET_CHAINS: ChainConfig = {
     nativeCurrency: ETH,
     blockExplorerUrls: ["https://sepolia.etherscan.io"],
   },
-  1337: {
-    urls: ['https://远程.ip'],
+  1337:  {
+    urls: ['http://localhost:7545'],
+    name: 'Localhost 8545',
     nativeCurrency: ETH,
-    name: 'Location',
   },
   420: {
     urls: [

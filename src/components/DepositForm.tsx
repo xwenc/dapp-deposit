@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import useContract from "@hooks/useContract";
+import { toast } from "react-hot-toast";
 
 const options = [
   { name: "ETH", key: "eth" },
@@ -14,16 +16,72 @@ export default function DepositForm() {
   const [selectedToken, setSelectedToken] =
     useState<keyof typeof symbol>("eth");
   const [amount, setAmount] = useState(0);
+  const {
+    ethBalance,
+    erc20Balance,
+    erc20Deposit,
+    erc20Withdraw,
+    ethDeposit,
+    ethWithdraw,
+    loading,
+  } = useContract();
   const currentSymbol = symbol[selectedToken];
+  const onsubmit = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      try {
+        if (selectedToken === "eth") {
+          if (amount > 0) {
+            if (
+              (e.nativeEvent as SubmitEvent).submitter?.innerText === "Deposit"
+            ) {
+              await ethDeposit(amount);
+            } else {
+              await ethWithdraw(amount);
+            }
+          } else {
+            toast.error("Invalid amount");
+          }
+        } else {
+          if (amount > 0) {
+            if (
+              (e.nativeEvent as SubmitEvent).submitter?.innerText === "Deposit"
+            ) {
+              await erc20Deposit(amount);
+            } else {
+              await erc20Withdraw(amount);
+            }
+          } else {
+            toast.error("Invalid amount");
+          }
+        }
+      } catch (err) {
+        console.error(err);
+        toast.error(`Failed to deposit/withdraw ${currentSymbol}`);
+      } finally {
+        setAmount(0);
+      }
+    },
+    [
+      selectedToken,
+      amount,
+      ethDeposit,
+      ethWithdraw,
+      erc20Deposit,
+      erc20Withdraw,
+    ]
+  );
+
   return (
     <>
       <div className="mb-8">
         <div className="text-sm font-semibold text-white">Your Balance</div>
         <div className="mt-2 text-5xl font-semibold text-white">
-          {amount} {currentSymbol}
+          {currentSymbol === symbol.eth ? ethBalance : erc20Balance}{" "}
+          {currentSymbol}
         </div>
       </div>
-      <form action="#" method="POST" className="space-y-6">
+      <form className="space-y-6" onSubmit={onsubmit}>
         <fieldset>
           <legend className="text-lg font-semibold text-white">Token</legend>
           <div className="mt-6 space-y-6 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
@@ -39,6 +97,7 @@ export default function DepositForm() {
                     setSelectedToken(opt.key as keyof typeof symbol);
                     setAmount(0);
                   }}
+                  disabled={loading}
                 />
                 <label
                   htmlFor={opt.key}
@@ -76,17 +135,30 @@ export default function DepositForm() {
           <button
             type="submit"
             className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+            disabled={loading}
           >
             Deposit
           </button>
           <button
             type="submit"
             className="flex w-full justify-center rounded-md bg-red-500 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-red-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500"
+            disabled={loading}
           >
             Withdraw
           </button>
         </div>
       </form>
+      {loading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/75   z-50">
+          <div className="flex flex-col items-center">
+            {/* 旋转加载动画 */}
+            <div className="w-16 h-16 border-4 border-t-transparent border-white rounded-full animate-spin"></div>
+            <p className="mt-4 text-white text-lg font-semibold">
+              Trading in progress, Please wait...
+            </p>
+          </div>
+        </div>
+      )}
     </>
   );
 }

@@ -4,8 +4,8 @@ export default function Home() {
   const { onConnect, isActive } = useWallet();
   return (
     <div className="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8">
-      <h2 className="max-w-2xl text-balance text-4xl font-semibold tracking-tight text-white sm:text-5xl">
-        Welcome to the future of DeFi on Ethereum
+      <h2 className="text-4xl font-semibold tracking-tight text-white sm:text-4xl animate-pulse">
+        Experience the future of decentralized finance with our cutting-edge DApp.
       </h2>
       {!isActive ? (
         <div className="mt-10 flex items-center gap-x-6">

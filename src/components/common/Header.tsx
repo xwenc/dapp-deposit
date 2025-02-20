@@ -1,5 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
-import toast from "react-hot-toast";
+import { useEffect } from "react";
 import {
   Disclosure,
   DisclosureButton,
@@ -15,7 +14,6 @@ import cx from "classnames";
 import { metaMask } from "@connections/metaMask";
 import useWallet from "@hooks/useWallet";
 
-
 const Header = () => {
   const {
     isActive,
@@ -23,7 +21,9 @@ const Header = () => {
     account,
     onConnect,
     onDisconnect,
+    balance,
   } = useWallet();
+
   const location = useLocation();
   const navigation = [
     { name: "Home", href: "/", current: location.pathname === "/" },
@@ -35,6 +35,7 @@ const Header = () => {
     void metaMask.connectEagerly().catch(() => {
       console.debug("Failed to connect eagerly to metamask");
     });
+    metaMask.resetState()
   }, []);
 
   return (
@@ -88,26 +89,33 @@ const Header = () => {
                 Connect to Wallet
               </button>
             ) : (
-              <Menu as="div" className="relative ml-3">
-                <div>
-                  <MenuButton className="rounded-full px-4 py-2 text-sm font-medium border border-gray-400 text-gray-300 hover:bg-gray-700 hover:text-white">
-                    {account?.[0].slice(0, 6)}...{account?.[0].slice(-4)}
-                  </MenuButton>
+              <>
+                <Menu as="div" className="relative ml-3">
+                  <div>
+                    <MenuButton className="rounded-full px-4 py-2 text-sm font-medium border border-gray-400 text-gray-300 hover:bg-gray-700 hover:text-white">
+                      {account?.slice(0, 6)}...{account?.slice(-4)}
+                    </MenuButton>
+                  </div>
+                  <MenuItems
+                    transition
+                    className="absolute right-0 z-10 mt-2 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
+                  >
+                    <MenuItem>
+                      <button
+                        className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
+                        onClick={onDisconnect}
+                      >
+                        Sign out
+                      </button>
+                    </MenuItem>
+                  </MenuItems>
+                </Menu>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-300">
+                    {balance} ETH
+                  </p>
                 </div>
-                <MenuItems
-                  transition
-                  className="absolute right-0 z-10 mt-2 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
-                >
-                  <MenuItem>
-                    <button
-                      className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
-                      onClick={onDisconnect}
-                    >
-                      Sign out
-                    </button>
-                  </MenuItem>
-                </MenuItems>
-              </Menu>
+              </>
             )}
           </div>
         </div>
