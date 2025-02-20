@@ -9,7 +9,7 @@ const MainLayout = () => {
   const { canvasRef } = useCanvas();
   return (
     <>
-      <canvas className="particlesCanvas" ref={canvasRef}></canvas>
+      <canvas className="particlesCanvas" ref={canvasRef}><span className="sr-only">particles canvas</span></canvas>
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-1">
