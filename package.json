@@ -5,6 +5,8 @@
     "clent:dev": "webpack --mode development",
     "clent:server": "webpack serve --mode development",
     "clent:prod": "webpack --mode production",
+    "deploy": "yarn dlx wrangler pages deploy ./dist --project-name=dapp-deposit",
+    "clent:deploy": "yarn clent:prod && yarn deploy",
     "test:uidiff": "backstop test",
     "test": "jest --collectCoverage --reporters default jest-stare"
   },
